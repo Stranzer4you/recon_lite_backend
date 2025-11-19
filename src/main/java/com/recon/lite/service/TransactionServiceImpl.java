@@ -3,7 +3,7 @@ package com.recon.lite.service;
 import com.recon.lite.dao.Transaction;
 import com.recon.lite.exceptions.BadRequestException;
 import com.recon.lite.mapper.TransactionsMapper;
-import com.recon.lite.model.request.TransactionRequest;
+import com.recon.lite.model.request.TransactionRequestDTO;
 import com.recon.lite.model.response.AllTransactionsResponse;
 import com.recon.lite.model.response.TransactionResponse;
 import com.recon.lite.repository.TransactionRepository;
@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -34,7 +33,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional(rollbackFor = Exception.class, isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public BaseResponse createTransaction(TransactionRequest request) {
+    public BaseResponse createTransaction(TransactionRequestDTO request) {
         Transaction transaction = mapper.dtoToDao(request);
         transaction.setUpdatedAt(LocalDateTime.now());
         transaction.setStatus(TransactionStatusEnum.RAW.name());
@@ -63,7 +62,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional(rollbackFor = Exception.class, isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public BaseResponse updateTransaction(Long id, TransactionRequest request) {
+    public BaseResponse updateTransaction(Long id, TransactionRequestDTO request) {
         Transaction transaction = getTransactionOrThrow(id);
         transaction.setSource(request.getSource());
         transaction.setDescription(request.getDescription());

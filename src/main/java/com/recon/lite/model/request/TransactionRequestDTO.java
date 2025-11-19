@@ -8,7 +8,8 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
-public class TransactionRequest {
+public class TransactionRequestDTO {
+    @NotBlank(message = ExceptionConstants.DESCRIPTION_IS_MANDATORY)
     private String description;
     @NotNull(message = ExceptionConstants.AMOUNT_IS_MANDATORY)
     @DecimalMin(value = "0.00", message = ExceptionConstants.AMOUNT_SHOULD_BE_POSITIVE)
