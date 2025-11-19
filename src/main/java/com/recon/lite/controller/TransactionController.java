@@ -1,7 +1,7 @@
 package com.recon.lite.controller;
 
 
-import com.recon.lite.model.request.TransactionRequest;
+import com.recon.lite.model.request.TransactionRequestDTO;
 import com.recon.lite.service.TransactionService;
 import com.recon.lite.utility.BaseResponse;
 import jakarta.validation.Valid;
@@ -16,7 +16,7 @@ public class TransactionController {
     private TransactionService service;
 
     @PostMapping()
-    public BaseResponse createTransaction(@RequestBody @Valid TransactionRequest request) {
+    public BaseResponse createTransaction(@RequestBody @Valid TransactionRequestDTO request) {
         return service.createTransaction(request);
     }
 
@@ -31,7 +31,7 @@ public class TransactionController {
     }
 
     @PutMapping("/{id}")
-    public BaseResponse updateTransaction(@PathVariable("id") Long id, @RequestBody @Valid TransactionRequest request) {
+    public BaseResponse updateTransaction(@PathVariable("id") Long id, @RequestBody @Valid TransactionRequestDTO request) {
         return service.updateTransaction(id, request);
     }
 
