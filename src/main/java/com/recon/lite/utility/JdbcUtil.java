@@ -3,12 +3,14 @@ package com.recon.lite.utility;
 
 import com.recon.lite.model.request.GetAllRulesFilterDTO;
 import com.recon.lite.model.request.RuleResponseDTO;
+import com.recon.lite.model.response.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +51,46 @@ public class JdbcUtil {
         return jdbcTemplate.query(query.toString(), params.toArray(), rulesRowMapper);
     }
 
+
+    public List<TransactionResponse> getAllTransactions(String source, String status, Double amountMin, Double amountMax, String dateFrom, String dateTo) {
+        StringBuilder sql = new StringBuilder("""
+                    SELECT
+                    "ID","Description","Amount", "Source","Status",TO_CHAR("CreatedAt", 'DD/MM/YYYY') AS "CreatedAtFormatted"
+                    FROM "Transactions"
+                    WHERE 1 = 1
+                """);
+        List<Object> params = new ArrayList<>();
+        if (!ObjectUtils.isEmpty(source)) {
+            sql.append(" AND \"Source\" = ? ");
+            params.add(source);
+        }
+        if (!ObjectUtils.isEmpty(status)) {
+            sql.append(" AND \"Status\" = ? ");
+            params.add(status);
+        }
+        if (amountMin != null) {
+            sql.append(" AND \"Amount\" >= ? ");
+            params.add(amountMin);
+        }
+        if (amountMax != null) {
+            sql.append(" AND \"Amount\" <= ? ");
+            params.add(amountMax);
+        }
+        if (dateFrom != null) {
+            LocalDate fromDate = DateUtil.parseDateOrThrow(dateFrom);
+            sql.append(" AND \"TransactionDate\" >= ? ");
+            params.add(fromDate);
+        }
+        if (dateTo != null) {
+            LocalDate toDate = DateUtil.parseDateOrThrow(dateTo);
+            sql.append(" AND \"TransactionDate\" <= ? ");
+            params.add(toDate);
+        }
+        sql.append(" ORDER BY \"CreatedAt\" DESC ");
+        return jdbcTemplate.query(sql.toString(), params.toArray(), transactionRowMapper);
+    }
+
+
     private final RowMapper<RuleResponseDTO> rulesRowMapper = (rs, rowNum) -> {
         RuleResponseDTO rule = new RuleResponseDTO();
         rule.setId(rs.getLong("ID"));
@@ -60,6 +102,17 @@ public class JdbcUtil {
         rule.setPriority(rs.getInt("Priority"));
         rule.setCreatedAt(rs.getString("CreatedAt"));
         return rule;
+    };
+
+    private final RowMapper<TransactionResponse> transactionRowMapper = (rs, rowNum) -> {
+        TransactionResponse dto = new TransactionResponse();
+        dto.setId(rs.getLong("ID"));
+        dto.setDescription(rs.getString("Description"));
+        dto.setAmount(rs.getDouble("Amount"));
+        dto.setSource(rs.getString("Source"));
+        dto.setStatus(rs.getString("Status"));
+        dto.setCreatedAt(rs.getString("CreatedAtFormatted"));
+        return dto;
     };
 
 

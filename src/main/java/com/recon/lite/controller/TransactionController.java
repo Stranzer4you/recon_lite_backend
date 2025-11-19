@@ -1,6 +1,7 @@
 package com.recon.lite.controller;
 
 
+import com.recon.lite.model.request.GetAllTransactionsFilterDTO;
 import com.recon.lite.model.request.TransactionRequestDTO;
 import com.recon.lite.service.TransactionService;
 import com.recon.lite.utility.BaseResponse;
@@ -26,8 +27,8 @@ public class TransactionController {
     }
 
     @GetMapping()
-    public BaseResponse getAllTransactions() {
-        return service.getAllTransactions();
+    public BaseResponse getAllTransactions(@ModelAttribute GetAllTransactionsFilterDTO dto) {
+        return service.getAllTransactions(dto);
     }
 
     @PutMapping("/{id}")

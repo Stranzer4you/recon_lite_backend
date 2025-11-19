@@ -1,5 +1,6 @@
 package com.recon.lite.service;
 
+import com.recon.lite.model.request.GetAllTransactionsFilterDTO;
 import com.recon.lite.model.request.TransactionRequestDTO;
 import com.recon.lite.utility.BaseResponse;
 
@@ -8,7 +9,7 @@ public interface TransactionService {
 
     BaseResponse getTransactionById(Long id);
 
-    BaseResponse getAllTransactions();
+    BaseResponse getAllTransactions(GetAllTransactionsFilterDTO dto);
 
     BaseResponse updateTransaction(Long id, TransactionRequestDTO request);
 
