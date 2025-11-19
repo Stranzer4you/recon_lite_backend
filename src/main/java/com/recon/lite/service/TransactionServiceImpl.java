@@ -3,12 +3,15 @@ package com.recon.lite.service;
 import com.recon.lite.dao.Transaction;
 import com.recon.lite.exceptions.BadRequestException;
 import com.recon.lite.mapper.TransactionsMapper;
+import com.recon.lite.model.request.GetAllTransactionsFilterDTO;
 import com.recon.lite.model.request.TransactionRequestDTO;
 import com.recon.lite.model.response.AllTransactionsResponse;
 import com.recon.lite.model.response.TransactionResponse;
 import com.recon.lite.repository.TransactionRepository;
 import com.recon.lite.utility.BaseResponse;
 import com.recon.lite.utility.BaseResponseUtility;
+import com.recon.lite.utility.DateUtil;
+import com.recon.lite.utility.JdbcUtil;
 import com.recon.lite.utility.constants.ExceptionConstants;
 import com.recon.lite.utility.enums.TransactionStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +19,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -29,6 +34,9 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Autowired
     private TransactionsMapper mapper;
+
+    @Autowired
+    private JdbcUtil jdbcUtil;
 
 
     @Override
@@ -52,11 +60,10 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public BaseResponse getAllTransactions() {
-        List<Transaction> transactionList = repository.findAll();
-        List<TransactionResponse> responseList = mapper.daoListToResponseList(transactionList);
+    public BaseResponse getAllTransactions(GetAllTransactionsFilterDTO dto) {
+        List<TransactionResponse> transactionList = jdbcUtil.getAllTransactions(dto.getSource(), dto.getStatus(), dto.getAmountMin(), dto.getAmountMax(), dto.getDateFrom(), dto.getDateTo());
         AllTransactionsResponse response = new AllTransactionsResponse();
-        response.setTransactions(responseList);
+        response.setTransactions(transactionList);
         return BaseResponseUtility.getBaseResponse(response);
     }
 

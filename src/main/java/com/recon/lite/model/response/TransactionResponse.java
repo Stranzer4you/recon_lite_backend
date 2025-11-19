@@ -12,5 +12,4 @@ public class TransactionResponse {
     private String source;
     private String status;
     private String createdAt;
-    private String updatedAt;
 }

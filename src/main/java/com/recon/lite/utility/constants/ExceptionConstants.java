@@ -14,4 +14,5 @@ public class ExceptionConstants {
     public static final String RULE_STATUS_IS_MANDATORY = "Rule status is mandatory";
     public static final String INVALID_RULE = "Invalid rule";
     public static final String DESCRIPTION_IS_MANDATORY = "Description is mandatory";
+    public static final String INVALID_DATE_FORMAT = "Invalid date format. Expected dd/MM/yyyy";
 }
