@@ -52,7 +52,7 @@ public class JdbcUtil {
     }
 
 
-    public List<TransactionResponse> getAllTransactions(String source, String status, Double amountMin, Double amountMax, String dateFrom, String dateTo) {
+    public List<TransactionResponse> getAllTransactions(String source, String status, Integer pageNumber, Integer pageSize) {
         StringBuilder sql = new StringBuilder("""
                     SELECT
                     "ID","Description","Amount", "Source","Status",TO_CHAR("CreatedAt", 'DD/MM/YYYY') AS "CreatedAtFormatted"
@@ -68,25 +68,14 @@ public class JdbcUtil {
             sql.append(" AND \"Status\" = ? ");
             params.add(status);
         }
-        if (amountMin != null) {
-            sql.append(" AND \"Amount\" >= ? ");
-            params.add(amountMin);
-        }
-        if (amountMax != null) {
-            sql.append(" AND \"Amount\" <= ? ");
-            params.add(amountMax);
-        }
-        if (dateFrom != null) {
-            LocalDate fromDate = DateUtil.parseDateOrThrow(dateFrom);
-            sql.append(" AND \"TransactionDate\" >= ? ");
-            params.add(fromDate);
-        }
-        if (dateTo != null) {
-            LocalDate toDate = DateUtil.parseDateOrThrow(dateTo);
-            sql.append(" AND \"TransactionDate\" <= ? ");
-            params.add(toDate);
-        }
         sql.append(" ORDER BY \"CreatedAt\" DESC ");
+        if (pageNumber != null && pageSize != null) {
+            int offset = (pageNumber - 1) * pageSize;
+            sql.append(" LIMIT ? OFFSET ? ");
+            params.add(pageSize);
+            params.add(offset);
+        }
+
         return jdbcTemplate.query(sql.toString(), params.toArray(), transactionRowMapper);
     }
 

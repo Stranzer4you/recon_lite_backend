@@ -61,8 +61,15 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public BaseResponse getAllTransactions(GetAllTransactionsFilterDTO dto) {
-        List<TransactionResponse> transactionList = jdbcUtil.getAllTransactions(dto.getSource(), dto.getStatus(), dto.getAmountMin(), dto.getAmountMax(), dto.getDateFrom(), dto.getDateTo());
+        List<TransactionResponse> transactionList = jdbcUtil.getAllTransactions(dto.getSource(), dto.getStatus(),dto.getPageNumber(),dto.getPageSize());
+        long totalRecords = repository.count();
+        int pageSize = dto.getPageSize();
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+        if (totalPages == 0 && totalRecords > 0) {
+            totalPages = 1;
+        }
         AllTransactionsResponse response = new AllTransactionsResponse();
+        response.setTotalPages((long) totalPages);
         response.setTransactions(transactionList);
         return BaseResponseUtility.getBaseResponse(response);
     }

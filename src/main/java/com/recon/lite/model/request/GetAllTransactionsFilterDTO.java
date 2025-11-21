@@ -7,8 +7,6 @@ import lombok.Data;
 public class GetAllTransactionsFilterDTO {
     private String source;
     private String status;
-    private Double amountMin;
-    private Double amountMax;
-    private String dateFrom;
-    private String dateTo;
+    private Integer pageNumber;
+    private Integer pageSize;
 }
