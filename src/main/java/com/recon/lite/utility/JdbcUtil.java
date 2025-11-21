@@ -31,10 +31,6 @@ public class JdbcUtil {
                 WHERE 1 = 1
                 """);
         List<Object> params = new ArrayList<>();
-        if (!ObjectUtils.isEmpty(filter.getRuleName())) {
-            query.append(" AND LOWER(\"RuleName\") LIKE LOWER(?) ");
-            params.add("%" + filter.getRuleName() + "%");
-        }
         if (!ObjectUtils.isEmpty(filter.getRuleType())) {
             query.append(" AND \"RuleType\" = ? ");
             params.add(filter.getRuleType());
