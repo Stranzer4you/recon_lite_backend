@@ -5,8 +5,6 @@ import lombok.Data;
 
 @Data
 public class GetAllRulesFilterDTO {
-    private String ruleName;
-    private String ruleValue;
     private String ruleType;
     private Boolean isActive;
     private Integer priority;
