@@ -18,7 +18,7 @@ public class CorsConfig {
                 registry.addMapping("/**")
                         .allowedOrigins(
                                 "http://localhost:5173",
-                                "https://recon-lite-ui.netlify.app"
+                                "https://reconlite.netlify.app"
                         )
                         .allowedMethods("*");
             }
