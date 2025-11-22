@@ -74,7 +74,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public BaseResponse getAllTransactions(GetAllTransactionsFilterDTO dto) {
-        List<TransactionResponse> transactionList = jdbcUtil.getAllTransactions(dto.getSource(), dto.getStatus(),dto.getPageNumber(),dto.getPageSize());
+        List<TransactionResponse> transactionList = jdbcUtil.getAllTransactions(dto.getSource(), dto.getStatus(), dto.getPageNumber(), dto.getPageSize());
         long totalRecords = repository.count();
         int pageSize = dto.getPageSize();
         int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
@@ -110,9 +110,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public BaseResponse runReconciliation() {
         List<Transaction> transactions = repository.findAll();
-        log.info("transactions -> {} ",transactions);
         List<Rule> activeRules = ruleRepository.findAllByIsActiveTrue();
-        log.info("activeRules -> {} ",activeRules);
 
         int matchedCount = 0;
         int unmatchedCount = 0;
@@ -122,7 +120,7 @@ public class TransactionServiceImpl implements TransactionService {
             boolean isMatched = false;
 
             for (Rule rule : activeRules) {
-                switch(rule.getRuleType()) {
+                switch (rule.getRuleType()) {
                     case "AMOUNT_GREATER_THAN":
                         double threshold = Double.parseDouble(rule.getRuleValue());
                         if (txn.getAmount() > threshold) {
@@ -145,10 +143,9 @@ public class TransactionServiceImpl implements TransactionService {
             if (isMatched) {
                 txn.setStatus("MATCHED");
                 matchedCount++;
-            } else if ("UNMATCHED".equals(txn.getStatus())) {
-                unmatchedCount++;
             } else {
-                rawCount++;
+                txn.setSource("UNMATCHED");
+                unmatchedCount++;
             }
         }
 
