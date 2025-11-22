@@ -3,6 +3,7 @@ package com.recon.lite.utility;
 
 import com.recon.lite.model.request.GetAllRulesFilterDTO;
 import com.recon.lite.model.request.RuleResponseDTO;
+import com.recon.lite.model.response.ReconciliationHistoryResponseDTO;
 import com.recon.lite.model.response.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,7 +11,9 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +22,9 @@ public class JdbcUtil {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a");
+
 
     public List<RuleResponseDTO> getAllRules(GetAllRulesFilterDTO filter) {
 
@@ -75,6 +81,31 @@ public class JdbcUtil {
         return jdbcTemplate.query(sql.toString(), params.toArray(), transactionRowMapper);
     }
 
+    private final RowMapper<ReconciliationHistoryResponseDTO> rowMapper = (rs, rowNum) -> {
+        ReconciliationHistoryResponseDTO dto = new ReconciliationHistoryResponseDTO();
+        dto.setId(rs.getLong("ID"));
+        dto.setMatchedCount(rs.getInt("MatchedCount"));
+        dto.setUnmatchedCount(rs.getInt("UnmatchedCount"));
+        dto.setRawCount(rs.getInt("RawCount"));
+
+        Timestamp timestamp = rs.getTimestamp("CreatedAt");
+        if (timestamp != null) {
+            dto.setCreatedAt(timestamp.toLocalDateTime().format(formatter));
+        } else {
+            dto.setCreatedAt(null);
+        }
+
+        return dto;
+    };
+
+    public List<ReconciliationHistoryResponseDTO> getAllHistory() {
+        String sql = """
+                SELECT "ID", "MatchedCount", "UnmatchedCount", "RawCount", "CreatedAt"
+                FROM "ReconciliationHistory"
+                ORDER BY "CreatedAt" DESC
+                """;
+        return jdbcTemplate.query(sql, rowMapper);
+    }
 
     private final RowMapper<RuleResponseDTO> rulesRowMapper = (rs, rowNum) -> {
         RuleResponseDTO rule = new RuleResponseDTO();

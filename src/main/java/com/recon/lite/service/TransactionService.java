@@ -14,4 +14,6 @@ public interface TransactionService {
     BaseResponse updateTransaction(Long id, TransactionRequestDTO request);
 
     BaseResponse deleteTransaction(Long id);
+
+    BaseResponse runReconciliation();
 }

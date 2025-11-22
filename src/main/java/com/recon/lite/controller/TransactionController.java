@@ -40,4 +40,9 @@ public class TransactionController {
     public BaseResponse deleteTransaction(@PathVariable("id") Long id) {
         return service.deleteTransaction(id);
     }
+
+    @PostMapping("/reconcile")
+    public BaseResponse runReconciliation() {
+        return service.runReconciliation();
+    }
 }
