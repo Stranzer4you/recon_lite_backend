@@ -144,7 +144,7 @@ public class TransactionServiceImpl implements TransactionService {
                 txn.setStatus("MATCHED");
                 matchedCount++;
             } else {
-                txn.setSource("UNMATCHED");
+                txn.setStatus("UNMATCHED");
                 unmatchedCount++;
             }
         }
