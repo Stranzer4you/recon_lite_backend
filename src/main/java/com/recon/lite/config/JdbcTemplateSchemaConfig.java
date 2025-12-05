@@ -13,9 +13,4 @@ public class JdbcTemplateSchemaConfig {
     public JdbcTemplateSchemaConfig(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
-    @PostConstruct
-    public void setSearchPath() {
-        jdbcTemplate.execute("SET search_path TO 'recon_lite'");
-    }
 }
