@@ -5,6 +5,7 @@ import com.recon.lite.model.request.RuleRequestDTO;
 import com.recon.lite.model.request.UpdateRuleRequestDTO;
 import com.recon.lite.service.RuleService;
 import com.recon.lite.utility.BaseResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class RulesController {
     private RuleService ruleService;
 
     @PostMapping
-    public BaseResponse createRule(@RequestBody RuleRequestDTO request) {
+    public BaseResponse createRule(@RequestBody @Valid RuleRequestDTO request) {
         return ruleService.createRule(request);
     }
 
